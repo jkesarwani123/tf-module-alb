@@ -27,7 +27,7 @@ resource "aws_security_group" "sg" {
   tags = merge(var.tags, { Name = "${var.name}-alb-${var.env}" })
 }
 
-resource "aws_lb" "test" {
+resource "aws_lb" "main" {
   name               = "${var.name}-alb-${var.env}"
   internal           = var.internal
   load_balancer_type = "application"
