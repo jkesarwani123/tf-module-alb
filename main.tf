@@ -5,23 +5,16 @@
 #}
 # Create Security Group
 resource "aws_security_group" "sg" {
-  name        = "${var.name}-${var.env}-sg"
-  description = "Allow TLS inbound traffic"
+  name        = "${var.name}-alb-${var.env}-sg"
+  description = "${var.name}-alb-${var.env}-sg"
   vpc_id      = var.vpc_id
 
   ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
+    description      = "HTTP"
+    from_port        = 80
+    to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = [var.bastion_cidr]
-  }
-  ingress {
-    description      = "APP"
-    from_port        = 8080
-    to_port          = 8080
-    protocol         = "tcp"
-    cidr_blocks      = var.allow_app_cidr
+    cidr_blocks      = var.allow_alb_cidr
   }
   egress {
     from_port        = 0
@@ -32,6 +25,26 @@ resource "aws_security_group" "sg" {
   }
 
   tags = {
-    Name = "${var.name}-${var.env}-sg"
+    Name = "${var.name}-alb-${var.env}-sg"
+  }
+}
+
+resource "aws_lb" "test" {
+  name               = "${var.name}-alb-${var.env}"
+  internal           = var.internal
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.sg.id]
+  subnets            = var.subnet_ids
+
+  enable_deletion_protection = true
+
+  access_logs {
+    bucket  = aws_s3_bucket.lb_logs.id
+    prefix  = "test-lb"
+    enabled = true
+  }
+
+  tags = {
+    Environment = "production"
   }
 }
