@@ -24,9 +24,7 @@ resource "aws_security_group" "sg" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = {
-    Name = "${var.name}-alb-${var.env}-sg"
-  }
+  tags = merge(var.tags, { Name = "${var.name}-alb-${var.env}" })
 }
 
 resource "aws_lb" "test" {
@@ -37,14 +35,5 @@ resource "aws_lb" "test" {
   subnets            = var.subnet_ids
 
   enable_deletion_protection = true
-
-  access_logs {
-    bucket  = aws_s3_bucket.lb_logs.id
-    prefix  = "test-lb"
-    enabled = true
-  }
-
-  tags = {
-    Environment = "production"
-  }
+  tags = merge(var.tags, { Name = "${var.name}-alb-${var.env}" })
 }
