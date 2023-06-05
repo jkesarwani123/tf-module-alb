@@ -50,3 +50,4 @@ resource "aws_lb_listener" "main" {
       status_code  = "403"
     }
   }
+}
