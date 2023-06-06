@@ -27,6 +27,7 @@ resource "aws_security_group" "sg" {
   tags = merge(var.tags, { Name = "${var.name}-alb-${var.env}" })
 }
 
+# Create Load Balancer
 resource "aws_lb" "main" {
   name               = "${var.name}-alb-${var.env}"
   internal           = var.internal
@@ -36,6 +37,7 @@ resource "aws_lb" "main" {
   tags = merge(var.tags, { Name = "${var.name}-alb-${var.env}" })
 }
 
+# Create Load Balancer Listener
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
